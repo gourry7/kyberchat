@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23667eea'/><stop offset='100%25' style='stop-color:%23764ba2'/></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)'/><path d='M50 25 L35 35 L35 50 Q35 65 50 70 Q65 65 65 50 L65 35 Z' fill='white'/><circle cx='50' cy='52' r='5' fill='url(%23g)'/><rect x='48' y='55' width='4' height='8' fill='url(%23g)'/></svg>">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* 비밀번호 모달 스타일 */
+    #passwordModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .password-box {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      max-width: 280px;
+      width: 90%;
+    }
+
+    .password-icon {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    #passwordInput {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      border: 2px solid #007aff;
+      border-radius: 8px;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    #passwordInput:focus {
+      outline: none;
+      border-color: #0051d5;
+    }
+
+    .password-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    #decryptButton {
+      flex: 1;
+      padding: 12px;
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    #decryptButton:hover {
+      background: #0051d5;
+    }
+
+    #cancelButton {
+      padding: 12px 16px;
+      background: #f0f0f0;
+      color: #666;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #cancelButton:hover {
+      background: #e0e0e0;
+    }
+  </style>
+  <title>KyberChat - 양자 안전 채팅</title>
+</head>
+<body>
+  <!-- 사용자 이름 입력 모달 -->
+  <div id="usernameModal" class="modal">
+    <div class="modal-content">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <svg width="80" height="80" viewBox="0 0 100 100" style="margin-bottom: 10px;">
+          <defs>
+            <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#667eea"/>
+              <stop offset="100%" style="stop-color:#764ba2"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="45" fill="url(#logoGrad)"/>
+          <path d="M50 25 L35 35 L35 50 Q35 65 50 70 Q65 65 65 50 L65 35 Z" fill="white"/>
+          <circle cx="50" cy="52" r="5" fill="url(#logoGrad)"/>
+          <rect x="48" y="55" width="4" height="8" fill="url(#logoGrad)"/>
+        </svg>
+        <h2 style="margin: 0; font-size: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">KyberChat</h2>
+        <p style="font-size: 13px; color: rgba(255,255,255,0.8); margin: 5px 0 0 0;">Quantum-Safe Messaging</p>
+      </div>
+      <p>사용자 이름을 입력해주세요</p>
+      <input type="text" id="usernameInput" placeholder="사용자 이름" maxlength="20">
+      <div class="modal-buttons">
+        <button id="joinButton">입장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 비밀번호 입력 모달 -->
+  <div id="passwordModal">
+    <div class="password-box">
+      <div class="password-icon">🔐</div>
+      <input type="password" id="passwordInput" placeholder="비밀번호" maxlength="4">
+      <div class="password-buttons">
+        <button id="decryptButton">확인</button>
+        <button id="cancelButton">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-container" id="chatContainer" style="display: none;">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <svg width="36" height="36" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#ffffff"/>
+              <stop offset="100%" style="stop-color:#f0f0f0"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="45" fill="url(#headerGrad)" opacity="0.3"/>
+          <path d="M50 25 L35 35 L35 50 Q35 65 50 70 Q65 65 65 50 L65 35 Z" fill="white"/>
+          <circle cx="50" cy="52" r="5" fill="rgba(255,255,255,0.5)"/>
+          <rect x="48" y="55" width="4" height="8" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+        <h3 style="margin: 0; font-weight: 600;">KyberChat</h3>
+      </div>
+      <div class="user-info">
+        <span id="currentUsername"></span>
+        <button id="changeUsernameButton">이름 변경</button>
+      </div>
+    </div>
+    <div class="messages-container" id="messages"></div>
+    <div class="message-input-container">
+      <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
+      <button id="sendButton">▲</button>
+    </div>
+  </div>
+
+  <script src="kyber.js"></script>
+  <script>
+    // DOM 요소들
+    const messagesDiv = document.getElementById('messages');
+    const messageInput = document.getElementById('messageInput');
+    const sendButton = document.getElementById('sendButton');
+    const usernameModal = document.getElementById('usernameModal');
+    const chatContainer = document.getElementById('chatContainer');
+    const usernameInput = document.getElementById('usernameInput');
+    const joinButton = document.getElementById('joinButton');
+    const currentUsernameSpan = document.getElementById('currentUsername');
+    const changeUsernameButton = document.getElementById('changeUsernameButton');
+    const passwordModal = document.getElementById('passwordModal');
+    const passwordInput = document.getElementById('passwordInput');
+    const decryptButton = document.getElementById('decryptButton');
+    const cancelButton = document.getElementById('cancelButton');
+    
+    const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
+    let ws = null;
+    let currentUsername = '';
+    let isConnected = false;
+
+    // Kyber 키 관리
+    let myKyber = { publicKey: null, secretKey: null };
+    let peerPublicKey = null;
+    let isKeyExchangeComplete = false;
+
+    // 전체 화면 암호화 상태
+    let isScreenEncrypted = false;
+    let originalMessages = new Map();
+    let autoEncryptTimer = null;
+
+    // ===== 사용자 이름 관리 =====
+    function saveUsername(username) {
+      localStorage.setItem('chatUsername', username);
+    }
+
+    function loadUsername() {
+      return localStorage.getItem('chatUsername') || '';
+    }
+
+    async function connectToChat(username) {
+      currentUsername = username;
+      currentUsernameSpan.textContent = currentUsername;
+      saveUsername(username);
+      usernameModal.style.display = 'none';
+      chatContainer.style.display = 'flex';
+      
+      // 먼저 Kyber 모듈 로드
+      displaySystemMessage('Kyber 모듈 로딩 중...');
+      try {
+        await Kyber.ready();
+        displaySystemMessage('Kyber 모듈 로드 완료');
+      } catch (error) {
+        console.error('Kyber 모듈 로드 실패:', error);
+        displaySystemMessage('Kyber 모듈 로드 실패. 새로고침 해주세요.');
+        return;
+      }
+      
+      // WebSocket 연결
+      displaySystemMessage('서버 연결 중...');
+               // Render.com 배포용 WebSocket 연결
+               ws = new WebSocket(`${wsProtocol}://${location.host}`);
+      setupWebSocketHandlers();
+    }
+
+    // ===== WebSocket 핸들러 =====
+    function setupWebSocketHandlers() {
+      ws.addEventListener('open', () => {
+        isConnected = true;
+        displaySystemMessage('서버 연결 완료! 키 생성 중...');
+        messageInput.disabled = true;
+        
+        // 키 생성 (지연 없이 즉시 실행)
+        generateKyber().catch((error) => {
+          console.error('키 생성 오류:', error);
+          displaySystemMessage('키 생성 실패: ' + error.message);
+        });
+      });
+
+      ws.addEventListener('message', async (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          console.log('메시지 수신:', msg.type);
+          
+          // 공개키 수신
+          if (msg.type === 'pubkey' && msg.key) {
+            console.log('상대방 공개키 수신, 길이:', msg.key.length);
+            peerPublicKey = base64ToBytes(msg.key);
+            console.log('peerPublicKey 설정됨, 바이트 길이:', peerPublicKey.length);
+            
+            // 내 키도 준비되었는지 확인
+            if (myKyber.publicKey && myKyber.secretKey) {
+              isKeyExchangeComplete = true;
+              displaySystemMessage('키 교환 완료!');
+              messageInput.disabled = false;
+              messageInput.placeholder = '메시지를 입력하세요...';
+              console.log('키 교환 완료! 메시지 입력 가능');
+            } else {
+              displaySystemMessage('상대방 공개키 수신. 내 키 생성 중...');
+              console.log('내 키가 아직 준비되지 않음. 대기 중...');
+            }
+            return;
+          }
+          
+          // 암호화된 메시지 수신
+          if (msg.type === 'encrypted_message' && msg.encryptedContent) {
+            try {
+              const encryptedData = base64ToBytes(msg.encryptedContent);
+              const decryptedMessage = await Kyber.decrypt(encryptedData, myKyber.secretKey);
+              displayMessage(decryptedMessage, false, msg.username || '알 수 없음');
+            } catch (error) {
+              displaySystemMessage('복호화 실패: ' + error.message);
+            }
+            return;
+          }
+          
+          // 평문 메시지
+          if (msg.content) {
+            displayMessage(msg.content, false, msg.username || '알 수 없음');
+          }
+        } catch (error) {
+          // JSON 아님 - 평문으로 처리
+          if (event.data.length > 2) {
+            displayMessage(event.data, false, '알 수 없음');
+          }
+        }
+      });
+
+      ws.addEventListener('close', () => {
+        isConnected = false;
+        displaySystemMessage('연결이 끊어졌습니다.');
+        console.log('WebSocket 연결 종료');
+      });
+
+      ws.addEventListener('error', (error) => {
+        console.error('WebSocket 오류:', error);
+        displaySystemMessage('연결 오류 발생');
+      });
+    }
+
+    // ===== Kyber 관련 함수 =====
+    function bytesToBase64(bytes) {
+      return btoa(String.fromCharCode(...new Uint8Array(bytes)));
+    }
+
+    function base64ToBytes(b64) {
+      const bin = atob(b64);
+      const bytes = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return bytes;
+    }
+
+    async function generateKyber() {
+      // Kyber.ready()는 이미 connectToChat()에서 호출됨
+      const { publicKey, secretKey } = await Kyber.keypair();
+      myKyber.publicKey = publicKey;
+      myKyber.secretKey = secretKey;
+      console.log('내 키 생성 완료. publicKey 길이:', publicKey.length, 'secretKey 길이:', secretKey.length);
+      
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ 
+          type: 'pubkey', 
+          alg: 'KYBER512', 
+          key: bytesToBase64(publicKey) 
+        }));
+        console.log('내 공개키 전송 완료');
+        displaySystemMessage('공개키 전송 완료. 상대방 대기 중...');
+      }
+      
+      // 상대방 공개키가 이미 도착했는지 확인
+      if (peerPublicKey && peerPublicKey.length > 0) {
+        isKeyExchangeComplete = true;
+        displaySystemMessage('키 교환 완료!');
+        messageInput.disabled = false;
+        messageInput.placeholder = '메시지를 입력하세요...';
+        console.log('키 교환 완료! (상대방 키 이미 수신됨)');
+      }
+    }
+
+    // ===== 메시지 전송 =====
+    sendButton.addEventListener('click', async () => {
+      const message = messageInput.value.trim();
+      if (!message || !isKeyExchangeComplete) return;
+      
+      try {
+        // 암호화
+        const encryptedData = await Kyber.encrypt(peerPublicKey, message);
+        const encryptedBase64 = bytesToBase64(encryptedData);
+        
+        // 전송
+        ws.send(JSON.stringify({ 
+          type: 'encrypted_message', 
+          username: currentUsername,
+          encryptedContent: encryptedBase64
+        }));
+        
+        // 표시
+        displayMessage(message, true, currentUsername);
+        messageInput.value = '';
+      } catch (error) {
+        displaySystemMessage('전송 실패: ' + error.message);
+      }
+    });
+
+    messageInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendButton.click();
+    });
+
+    // ===== 메시지 표시 =====
+    function displayMessage(message, isSender = false, username = '') {
+      console.log('[displayMessage] 호출됨. isScreenEncrypted:', isScreenEncrypted);
+      
+      const messageContainer = document.createElement('div');
+      const messageElement = document.createElement('div');
+      
+      // 사용자 이름
+      if (username && username !== '알 수 없음') {
+        const usernameElement = document.createElement('div');
+        usernameElement.textContent = username;
+        usernameElement.classList.add('message-username');
+        messageContainer.appendChild(usernameElement);
+      }
+      
+      messageContainer.classList.add('message-container');
+      
+      if (isSender) {
+        messageContainer.classList.add('sender-message-container');
+        messageElement.classList.add('message-bubble', 'sender-message-bubble');
+      } else {
+        messageElement.classList.add('message-bubble');
+      }
+      
+      // 항상 평문으로 표시 (암호화 상태와 무관)
+      messageElement.textContent = message;
+      originalMessages.set(messageElement, message);
+      
+      messageContainer.appendChild(messageElement);
+      messagesDiv.appendChild(messageContainer);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      
+      // 화면이 암호화되어 있으면 암호화 상태를 해제하고 타이머 재시작
+      if (isScreenEncrypted) {
+        console.log('[displayMessage] 화면이 암호화됨. 상태 해제하고 타이머 재시작');
+        isScreenEncrypted = false;
+      }
+      
+      // 기존 타이머를 취소하고 새로 시작
+      if (autoEncryptTimer) {
+        console.log('[displayMessage] 기존 타이머 취소');
+        clearTimeout(autoEncryptTimer);
+      }
+      
+      // 10초 후 전체 암호화
+      console.log('[displayMessage] 10초 타이머 시작');
+      startAutoEncryptTimer();
+    }
+
+    // 시스템 메시지 요소 (재사용)
+    let systemMessageElement = null;
+    let systemMessageTimer = null;
+
+    function displaySystemMessage(message) {
+      // 기존 타이머 취소
+      if (systemMessageTimer) {
+        clearTimeout(systemMessageTimer);
+      }
+      
+      // 기존 시스템 메시지가 없으면 생성
+      if (!systemMessageElement) {
+        systemMessageElement = document.createElement('div');
+        systemMessageElement.style.textAlign = 'center';
+        systemMessageElement.style.color = '#999';
+        systemMessageElement.style.fontSize = '12px';
+        systemMessageElement.style.margin = '10px 0';
+        systemMessageElement.style.transition = 'opacity 0.3s';
+        messagesDiv.appendChild(systemMessageElement);
+      }
+      
+      // 메시지 업데이트
+      systemMessageElement.textContent = `🔐 ${message}`;
+      systemMessageElement.style.opacity = '1';
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      
+      // 3초 후 페이드아웃 후 제거
+      systemMessageTimer = setTimeout(() => {
+        if (systemMessageElement) {
+          systemMessageElement.style.opacity = '0';
+          setTimeout(() => {
+            if (systemMessageElement && systemMessageElement.parentNode) {
+              systemMessageElement.parentNode.removeChild(systemMessageElement);
+              systemMessageElement = null;
+            }
+          }, 300);
+        }
+      }, 3000);
+    }
+
+    // ===== 전체 화면 암호화/복호화 =====
+    function generateRandomHex(length) {
+      const chars = '0123456789abcdef';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return result;
+    }
+
+    function encryptAllMessages() {
+      console.log('[encryptAllMessages] 호출됨. isScreenEncrypted:', isScreenEncrypted);
+      if (isScreenEncrypted) {
+        console.log('[encryptAllMessages] 이미 암호화됨. 종료');
+        return;
+      }
+      
+      // 타이머 정리
+      if (autoEncryptTimer) {
+        clearTimeout(autoEncryptTimer);
+        autoEncryptTimer = null;
+      }
+      
+      // originalMessages.clear()를 제거하여 기존 메시지 유지
+      const messageElements = document.querySelectorAll('.message-bubble');
+      console.log('[encryptAllMessages] 암호화할 메시지 수:', messageElements.length);
+      
+      messageElements.forEach((el) => {
+        const text = el.textContent;
+        if (!text.startsWith('🔐')) {
+          // 아직 originalMessages에 없으면 저장
+          if (!originalMessages.has(el)) {
+            originalMessages.set(el, text);
+          }
+          el.textContent = '🔐 ' + generateRandomHex(32) + '...';
+          el.style.fontFamily = 'monospace';
+          el.style.fontSize = '12px';
+          el.style.color = '#666';
+        }
+      });
+      
+      isScreenEncrypted = true;
+      console.log('[encryptAllMessages] 암호화 완료. isScreenEncrypted:', isScreenEncrypted);
+    }
+
+    function decryptAllMessages() {
+      console.log('[decryptAllMessages] 호출됨. isScreenEncrypted:', isScreenEncrypted);
+      if (!isScreenEncrypted) {
+        console.log('[decryptAllMessages] 암호화 안됨. 종료');
+        return;
+      }
+      
+      const messageElements = document.querySelectorAll('.message-bubble');
+      console.log('[decryptAllMessages] 복호화할 메시지 수:', messageElements.length);
+      
+      messageElements.forEach((el) => {
+        if (el.textContent.startsWith('🔐')) {
+          const original = originalMessages.get(el);
+          if (original) {
+            el.textContent = original;
+            el.style.fontFamily = '';
+            el.style.fontSize = '';
+            el.style.color = '';
+          }
+        }
+      });
+      
+      isScreenEncrypted = false;
+      console.log('[decryptAllMessages] 복호화 완료. isScreenEncrypted:', isScreenEncrypted);
+      
+      // 복호화 후 10초 뒤 다시 암호화
+      console.log('[decryptAllMessages] 10초 타이머 시작');
+      startAutoEncryptTimer();
+    }
+
+    function startAutoEncryptTimer() {
+      console.log('[startAutoEncryptTimer] 호출됨');
+      if (autoEncryptTimer) {
+        console.log('[startAutoEncryptTimer] 기존 타이머 취소');
+        clearTimeout(autoEncryptTimer);
+      }
+      
+      autoEncryptTimer = setTimeout(() => {
+        console.log('[startAutoEncryptTimer] 10초 경과. isScreenEncrypted:', isScreenEncrypted);
+        if (!isScreenEncrypted) {
+          encryptAllMessages();
+        } else {
+          console.log('[startAutoEncryptTimer] 이미 암호화됨. 스킵');
+        }
+      }, 10000);
+      console.log('[startAutoEncryptTimer] 타이머 설정 완료');
+    }
+
+    // ===== 이벤트 리스너 =====
+    // 암호화된 화면 클릭 시 비밀번호 모달
+    document.addEventListener('click', (event) => {
+      if (passwordModal.style.display === 'flex') return;
+      
+      if ((event.target.closest('.messages-container') || event.target.closest('.message-bubble')) && isScreenEncrypted) {
+        passwordModal.style.display = 'flex';
+        passwordInput.focus();
+      }
+    });
+
+    // 복호화 버튼
+    decryptButton.addEventListener('click', () => {
+      if (passwordInput.value === '1234') {
+        decryptAllMessages();
+        passwordModal.style.display = 'none';
+        passwordInput.value = '';
+      } else {
+        alert('비밀번호가 틀렸습니다.');
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    });
+
+    // 취소 버튼
+    cancelButton.addEventListener('click', () => {
+      passwordModal.style.display = 'none';
+      passwordInput.value = '';
+    });
+
+    // Enter 키
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') decryptButton.click();
+    });
+
+    // ESC 키
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') cancelButton.click();
+    });
+
+    // ===== 사용자 이름 입력 =====
+    joinButton.addEventListener('click', () => {
+      const username = usernameInput.value.trim();
+      if (username.length < 2) {
+        alert('사용자 이름은 2자 이상이어야 합니다.');
+        return;
+      }
+      connectToChat(username);
+    });
+
+    usernameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') joinButton.click();
+    });
+
+    changeUsernameButton.addEventListener('click', () => {
+      if (confirm('이름을 변경하시겠습니까?')) {
+        usernameModal.style.display = 'flex';
+        chatContainer.style.display = 'none';
+        usernameInput.value = currentUsername;
+        usernameInput.select();
+      }
+    });
+
+    // ===== 초기화 =====
+    window.addEventListener('load', () => {
+      const savedUsername = loadUsername();
+      if (savedUsername) {
+        usernameInput.value = savedUsername;
+        connectToChat(savedUsername);
+      } else {
+        usernameModal.style.display = 'flex';
+      }
+    });
+  </script>
+</body>
+</html>

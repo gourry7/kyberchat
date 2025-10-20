@@ -1,0 +1,497 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f0f2f5;
+  overflow: hidden;
+}
+
+/* 모달 스타일 */
+.modal {
+  display: flex;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  min-width: 320px;
+  max-width: 90%;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h2 {
+  margin: 0 0 10px 0;
+  color: white;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.modal-content p {
+  margin: 0 0 25px 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 16px;
+}
+
+#usernameInput {
+  width: 100%;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  outline: none;
+  transition: all 0.3s;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+#usernameInput:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+#joinButton {
+  background: white;
+  color: #667eea;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#joinButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+#joinButton:active {
+  transform: translateY(0);
+}
+
+#joinButton:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 채팅 컨테이너 */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 100%;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
+}
+
+/* 채팅 헤더 */
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  min-height: 60px;
+}
+
+.chat-header h3 {
+  margin: 0;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+#currentUsername {
+  font-weight: 600;
+  color: white;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+#changeUsernameButton {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  white-space: nowrap;
+}
+
+#changeUsernameButton:hover {
+  background-color: white;
+  color: #667eea;
+  border-color: white;
+}
+
+/* 메시지 컨테이너 */
+.messages-container {
+  flex-grow: 1;
+  overflow-y: scroll; /* scroll로 변경하여 항상 스크롤 가능 */
+  overflow-x: hidden;
+  padding: 20px;
+  padding-bottom: 30px; /* 하단 여유 공간 추가 */
+  background: #f0f2f5;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
+  overscroll-behavior-y: contain; /* 세로 스크롤만 제한 */
+  overscroll-behavior-x: none; /* 가로 스크롤은 제한 없음 */
+  position: relative; /* 포지션 명시 */
+  height: 0; /* flex-grow와 함께 사용하여 올바른 높이 계산 */
+  min-height: 0; /* 플렉스 아이템이 컨텐츠보다 작아질 수 있도록 */
+}
+
+/* 스크롤바 스타일 (웹킷 브라우저) */
+.messages-container::-webkit-scrollbar {
+  width: 8px; /* 조금 더 넓게 */
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #f0f2f5;
+  border-radius: 4px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #bbb; /* 조금 더 진하게 */
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #888; /* 호버 시 더 진하게 */
+}
+
+/* Firefox 스크롤바 스타일 */
+.messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: #bbb #f0f2f5;
+}
+
+/* 메시지 버블 */
+.message-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  animation: messageSlide 0.3s ease-out;
+}
+
+@keyframes messageSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-username {
+  font-size: 12px;
+  font-weight: 600;
+  color: #65676b;
+  margin-bottom: 5px;
+  padding: 0 12px;
+}
+
+.message-bubble {
+  background-color: white;
+  padding: 12px 16px;
+  border-radius: 18px;
+  max-width: 70%;
+  word-wrap: break-word;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  font-size: 15px;
+  line-height: 1.4;
+  align-self: flex-start;
+}
+
+.sender-message-container {
+  align-items: flex-end;
+}
+
+.sender-message-container .message-username {
+  text-align: right;
+  color: #667eea;
+}
+
+.sender-message-bubble {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  align-self: flex-end;
+}
+
+/* 시스템 메시지 */
+.system-message {
+  text-align: center;
+  color: #65676b;
+  font-size: 13px;
+  margin: 10px 0;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 20px;
+  max-width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 메시지 입력 영역 */
+.message-input-container {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  background: white;
+  border-top: 1px solid #e4e6eb;
+  gap: 10px;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+#messageInput {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  border-radius: 20px;
+  padding: 12px 20px;
+  font-size: 15px;
+  background-color: #f0f2f5;
+  transition: all 0.3s;
+  min-height: 40px;
+}
+
+#messageInput:focus {
+  background-color: #e4e6eb;
+}
+
+#messageInput:disabled {
+  background-color: #e4e6eb;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#sendButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 50%;
+  outline: none;
+  border: none;
+  width: 44px;
+  height: 44px;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+}
+
+#sendButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+}
+
+#sendButton:active {
+  transform: scale(0.95);
+}
+
+/* 암호화된 데이터 표시 */
+.encrypted-data {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background-color: rgba(102, 126, 234, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+  font-size: 11px;
+  max-width: 70%;
+  word-break: break-all;
+}
+
+.sender-message-container .encrypted-data {
+  align-self: flex-end;
+}
+
+.encrypted-label {
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.encrypted-content {
+  color: #65676b;
+  margin: 3px 0;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  opacity: 0.8;
+  font-size: 10px;
+}
+
+/* 모바일 최적화 */
+@media (max-width: 768px) {
+  .chat-header {
+    padding: 12px 15px;
+  }
+
+  .chat-header h3 {
+    font-size: 16px;
+  }
+
+  #currentUsername {
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
+  #changeUsernameButton {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .messages-container {
+    padding: 15px;
+    padding-bottom: 40px; /* 모바일에서 더 많은 하단 여유 공간 */
+    /* 모바일에서 스크롤 개선 */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y; /* 세로 스크롤만 허용 */
+  }
+
+  .message-bubble {
+    max-width: 85%;
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+
+  .message-input-container {
+    padding: 12px 15px;
+  }
+
+  #messageInput {
+    font-size: 16px; /* iOS에서 자동 줌 방지 */
+    padding: 10px 16px;
+  }
+
+  .encrypted-data {
+    font-size: 10px;
+    max-width: 85%;
+  }
+
+  .modal-content {
+    min-width: 280px;
+    padding: 35px 25px;
+  }
+
+  .modal-content h2 {
+    font-size: 24px;
+  }
+}
+
+/* 아이폰 노치 대응 */
+@supports (padding: max(0px)) {
+  .message-input-container {
+    padding-bottom: max(15px, env(safe-area-inset-bottom));
+  }
+}
+
+/* 다크 모드 지원 */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #18191a;
+  }
+
+  .chat-container {
+    background: #242526;
+  }
+
+  .messages-container {
+    background: #18191a;
+  }
+
+  .message-bubble {
+    background-color: #3a3b3c;
+    color: #e4e6eb;
+  }
+
+  .message-username {
+    color: #b0b3b8;
+  }
+
+  .system-message {
+    color: #b0b3b8;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  #messageInput {
+    background-color: #3a3b3c;
+    color: #e4e6eb;
+  }
+
+  #messageInput:focus {
+    background-color: #4e4f50;
+  }
+
+  .message-input-container {
+    background: #242526;
+    border-top-color: #3a3b3c;
+  }
+
+  .encrypted-data {
+    background-color: rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.3);
+  }
+
+  .encrypted-content {
+    color: #b0b3b8;
+  }
+}
