@@ -3,55 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- 캡처 방지 메타 태그 -->
-  <meta name="robots" content="noindex, nofollow">
-  <meta name="googlebot" content="noindex, nofollow">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%23667eea'/><stop offset='100%25' style='stop-color:%23764ba2'/></linearGradient></defs><circle cx='50' cy='50' r='45' fill='url(%23g)'/><path d='M50 25 L35 35 L35 50 Q35 65 50 70 Q65 65 65 50 L65 35 Z' fill='white'/><circle cx='50' cy='52' r='5' fill='url(%23g)'/><rect x='48' y='55' width='4' height='8' fill='url(%23g)'/></svg>">
   <link rel="stylesheet" href="style.css">
   <style>
-    /* 캡처 방지 스타일 */
+    /* 기본 스타일 */
     * {
-      -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      -ms-user-select: none !important;
-      user-select: none !important;
-      -webkit-touch-callout: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    body {
-      -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      -ms-user-select: none !important;
-      user-select: none !important;
-      -webkit-touch-callout: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    .chat-container {
-      -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      -ms-user-select: none !important;
-      user-select: none !important;
-      -webkit-touch-callout: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    .message-bubble {
-      -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      -ms-user-select: none !important;
-      user-select: none !important;
-      -webkit-touch-callout: none !important;
-      -webkit-tap-highlight-color: transparent !important;
-    }
-    
-    /* 입력 필드는 선택 허용 */
-    input, textarea {
-      -webkit-user-select: text !important;
-      -moz-user-select: text !important;
-      -ms-user-select: text !important;
-      user-select: text !important;
+      box-sizing: border-box;
     }
     
     /* 비밀번호 모달 스타일 */
@@ -158,6 +115,312 @@
       background: #e0e0e0;
       transform: translateY(-2px);
     }
+    
+
+    /* 사용자 목록 스타일 */
+    .user-list-button {
+      background: #007aff;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-left: 12px;
+    }
+
+    .user-list-button:hover {
+      background: #0051d5;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    }
+
+    .user-list-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .user-list-content {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .user-list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .user-list-header h3 {
+      margin: 0;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+      padding: 4px;
+      border-radius: 4px;
+      transition: all 0.3s ease;
+    }
+
+    .close-button:hover {
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .user-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .user-item:hover {
+      background: #e3f2fd;
+      border-color: #007aff;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+    }
+
+    .user-item.selected {
+      background: #007aff;
+      color: white;
+      border-color: #0051d5;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap; /* 모바일에서 버튼이 줄바꿈되도록 */
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .user-status {
+      font-size: 12px;
+      color: #28a745;
+      font-weight: 500;
+    }
+
+    .user-item.selected .user-status {
+      color: #a8d8ff;
+    }
+
+    .select-button {
+      background: #007aff;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .select-button:hover {
+      background: #0051d5;
+      transform: translateY(-1px);
+    }
+
+    .user-item.selected .select-button {
+      background: white;
+      color: #007aff;
+    }
+
+    .loading-users {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 20px;
+    }
+
+    .no-users {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 20px;
+    }
+
+    /* 사용자 목록 화면 스타일 */
+    .user-list-screen {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .user-list-header {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 16px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-list-content-main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .main-user-list {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .main-user-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-user-item:hover {
+      background: rgba(255, 255, 255, 1);
+      border-color: #007aff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0, 122, 255, 0.2);
+    }
+
+    .main-user-item.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .main-user-item.disabled:hover {
+      transform: none;
+      border-color: transparent;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .main-user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .main-user-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .main-user-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-user-name {
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .main-user-status {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .main-user-status.online {
+      color: #28a745;
+    }
+
+    .main-user-status.busy {
+      color: #ff6b6b;
+    }
+
+    .main-chat-button {
+      background: #007aff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .main-chat-button:hover {
+      background: #0051d5;
+      transform: translateY(-1px);
+    }
+
+    .main-chat-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+    }
 
     /* 모바일 대응 */
     @media (max-width: 768px) {
@@ -171,7 +434,7 @@
       }
       
       .password-title {
-        font-size: 16px;
+      font-size: 16px;
       }
       
       .password-description {
@@ -192,11 +455,260 @@
         padding: 12px 17px;
         font-size: 12px;
       }
+
+      .user-list-content {
+        padding: 20px;
+        max-width: 95%;
+      }
+
+      .user-list-header h3 {
+        font-size: 16px;
+      }
+
+      .user-item {
+        padding: 10px 12px;
+      }
+
+      .user-name {
+        font-size: 14px;
+      }
+
+      .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+      }
+      
+      /* 채팅 헤더 모바일 대응 */
+      .user-info {
+        gap: 6px;
+      }
+      
+      .user-info span {
+        width: 100%; /* 사용자 이름은 전체 너비 */
+        margin-bottom: 2px;
+        font-size: 14px;
+      }
+      
+      .user-info button {
+        flex: 1 1 calc(50% - 3px); /* 버튼은 한 줄에 2개씩 */
+        min-width: 0;
+        font-size: 10px !important;
+        padding: 6px 8px !important;
+        min-height: 32px !important;
+        max-height: 32px !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      
+      /* 방에서 나가기 버튼은 전체 너비 */
+      #backToUserList {
+        flex: 1 1 100% !important;
+        font-size: 11px !important;
+        padding: 7px 10px !important;
+      }
+      
+      /* 사용자 목록 화면 상단 버튼들 (이름 변경, 비밀번호 설정) */
+      #changeUsernameButton,
+      #passwordSetupButton {
+        font-size: 13px !important;
+        padding: 8px 12px !important;
+        min-height: 36px !important;
+        max-height: 36px !important;
+        max-width: 120px !important;
+        flex: 0 0 auto !important;
+      }
+      
+      .user-list-header .user-info {
+        gap: 8px;
+        justify-content: flex-start;
+      }
+      
+      .user-list-header .user-info span {
+        font-size: 14px;
+        flex: 0 0 auto;
+      }
+    }
+
+    /* 버튼 스타일 개선 */
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 채팅하기 버튼 */
+    .main-chat-button {
+      background: linear-gradient(135deg, #007aff, #0051d5);
+      color: white;
+      font-size: 16px;
+      padding: 14px 24px;
+      min-height: 48px;
+    }
+
+    .main-chat-button:hover {
+      background: linear-gradient(135deg, #0051d5, #003d99);
+    }
+
+    .main-chat-button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* 방에서 나가기 버튼 */
+    #backToUserList {
+      background: linear-gradient(135deg, #6c757d, #495057);
+      color: white;
+      font-size: 16px;
+      padding: 14px 24px;
+      min-height: 48px;
+    }
+
+    #backToUserList:hover {
+      background: linear-gradient(135deg, #495057, #343a40);
+    }
+
+    /* 기록 삭제 버튼 */
+    #clearHistoryButton {
+      background: linear-gradient(135deg, #ff6b6b, #e74c3c);
+      color: white;
+      font-size: 16px;
+      padding: 14px 24px;
+      min-height: 48px;
+    }
+
+    #clearHistoryButton:hover {
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+    }
+
+    /* 입장하기 버튼 */
+    #joinButton {
+      background: linear-gradient(135deg, #28a745, #1e7e34);
+      color: white;
+      font-size: 18px;
+      padding: 16px 32px;
+      min-height: 56px;
+      width: 100%;
+    }
+
+    #joinButton:hover {
+      background: linear-gradient(135deg, #1e7e34, #155724);
+    }
+
+    /* 비밀번호 관련 버튼들 */
+    #decryptButton, #setPasswordButton {
+      background: linear-gradient(135deg, #17a2b8, #138496);
+      color: white;
+      font-size: 16px;
+      padding: 14px 24px;
+      min-height: 48px;
+    }
+
+    #decryptButton:hover, #setPasswordButton:hover {
+      background: linear-gradient(135deg, #138496, #117a8b);
+    }
+
+    #cancelButton, #cancelSetupButton {
+      background: linear-gradient(135deg, #6c757d, #495057);
+      color: white;
+      font-size: 16px;
+      padding: 14px 24px;
+      min-height: 48px;
+    }
+
+    #cancelButton:hover, #cancelSetupButton:hover {
+      background: linear-gradient(135deg, #495057, #343a40);
+    }
+
+    /* 대화 요청 버튼들 */
+    #acceptChatButton {
+      background: linear-gradient(135deg, #28a745, #1e7e34);
+      color: white;
+      font-size: 16px;
+      padding: 14px 24px;
+      min-height: 48px;
+    }
+
+    #acceptChatButton:hover {
+      background: linear-gradient(135deg, #1e7e34, #155724);
+    }
+
+    #rejectChatButton {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+      font-size: 16px;
+      padding: 14px 24px;
+      min-height: 48px;
+    }
+
+    #rejectChatButton:hover {
+      background: linear-gradient(135deg, #c82333, #a71e2a);
+    }
+
+    /* 사용자 이름 변경 버튼 */
+    #changeUsernameButton {
+      background: linear-gradient(135deg, #ffc107, #e0a800);
+      color: #212529;
+      font-size: 14px;
+      padding: 10px 16px;
+      min-height: 40px;
+    }
+
+    #changeUsernameButton:hover {
+      background: linear-gradient(135deg, #e0a800, #d39e00);
+    }
+
+    /* 비밀번호 설정 버튼 */
+    #passwordSetupButton {
+      background: linear-gradient(135deg, #6f42c1, #5a32a3);
+      color: white;
+      font-size: 14px;
+      padding: 10px 16px;
+      min-height: 40px;
+    }
+
+    #passwordSetupButton:hover {
+      background: linear-gradient(135deg, #5a32a3, #4c2a85);
     }
   </style>
   <title>KyberChat - 양자 안전 채팅</title>
 </head>
 <body>
+  <!-- 대화 요청 알림 모달 -->
+  <div id="chatRequestModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>💬 대화 요청</h2>
+      <p id="chatRequestMessage"></p>
+      <div class="modal-buttons">
+        <button id="acceptChatButton" style="background: #28a745; color: white;">수락</button>
+        <button id="rejectChatButton" style="background: #dc3545; color: white;">거절</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 사용자 이름 입력 모달 -->
   <div id="usernameModal" class="modal">
     <div class="modal-content">
@@ -253,8 +765,9 @@
     </div>
   </div>
 
-  <div class="chat-container" id="chatContainer" style="display: none;">
-    <div class="chat-header">
+  <!-- 사용자 목록 화면 -->
+  <div class="user-list-screen" id="userListScreen" style="display: none;">
+    <div class="user-list-header">
       <div style="display: flex; align-items: center; gap: 12px;">
         <svg width="36" height="36" viewBox="0 0 100 100">
           <defs>
@@ -274,13 +787,57 @@
         <span id="currentUsername"></span>
         <button id="changeUsernameButton">이름 변경</button>
         <button id="passwordSetupButton" style="background: #28a745; color: white; margin-left: 8px;">비밀번호 설정</button>
-        <button id="clearHistoryButton" style="background: #ff6b6b; color: white; margin-left: 8px;">기록 삭제</button>
+      </div>
+    </div>
+    <div class="user-list-content-main">
+      <h2 style="text-align: center; margin-bottom: 20px; color: #333;">👥 접속한 사용자</h2>
+      <div id="mainUserList" class="main-user-list">
+        <div class="loading-users">사용자 목록을 불러오는 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 채팅방 화면 -->
+  <div class="chat-container" id="chatContainer" style="display: none;">
+    <div class="chat-header">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <svg width="36" height="36" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient id="headerGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#ffffff"/>
+              <stop offset="100%" style="stop-color:#f0f0f0"/>
+            </linearGradient>
+          </defs>
+          <circle cx="50" cy="50" r="45" fill="url(#headerGrad2)" opacity="0.3"/>
+          <path d="M50 25 L35 35 L35 50 Q35 65 50 70 Q65 65 65 50 L65 35 Z" fill="white"/>
+          <circle cx="50" cy="52" r="5" fill="rgba(255,255,255,0.5)"/>
+          <rect x="48" y="55" width="4" height="8" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+        <h3 style="margin: 0; font-weight: 600;">KyberChat</h3>
+      </div>
+      <div class="user-info">
+        <span id="currentUsernameChat"></span>
+        <button id="clearHistoryButton" style="background: #ff6b6b; color: white; margin-left: 8px;">🗑️ 기록 삭제</button>
+        <button id="backToUserList" style="background: #6c757d; color: white; margin-left: 8px;">🚪 방에서 나가기</button>
       </div>
     </div>
     <div class="messages-container" id="messages"></div>
     <div class="message-input-container">
       <input type="text" id="messageInput" placeholder="메시지를 입력하세요...">
       <button id="sendButton">▲</button>
+    </div>
+  </div>
+
+  <!-- 사용자 목록 모달 -->
+  <div id="userListModal" class="user-list-modal">
+    <div class="user-list-content">
+      <div class="user-list-header">
+        <h3>👥 접속한 사용자</h3>
+        <button id="closeUserList" class="close-button">✕</button>
+      </div>
+      <div id="userList" class="user-list">
+        <div class="loading-users">사용자 목록을 불러오는 중...</div>
+      </div>
     </div>
   </div>
 
@@ -291,20 +848,60 @@
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
     const usernameModal = document.getElementById('usernameModal');
+    const userListScreen = document.getElementById('userListScreen');
     const chatContainer = document.getElementById('chatContainer');
     const usernameInput = document.getElementById('usernameInput');
     const joinButton = document.getElementById('joinButton');
     const currentUsernameSpan = document.getElementById('currentUsername');
+    const currentUsernameChatSpan = document.getElementById('currentUsernameChat');
     const changeUsernameButton = document.getElementById('changeUsernameButton');
+    const backToUserListButton = document.getElementById('backToUserList');
+    
+    // 방에서 나가기 버튼 이벤트 리스너
+    if (backToUserListButton) {
+      backToUserListButton.addEventListener('click', () => {
+        console.log('방에서 나가기 버튼 클릭됨');
+        
+        // 대화 종료 요청
+        ws.send(JSON.stringify({
+          type: 'end_chat'
+        }));
+        
+        // 사용자 목록 화면으로 돌아가기
+        chatContainer.style.display = 'none';
+        userListScreen.style.display = 'flex';
+        
+        // 상태 초기화
+        selectedUserId = null;
+        currentChatId = null;
+        isInChat = false;
+        
+        // 메시지 입력창 비활성화
+        messageInput.disabled = true;
+        messageInput.placeholder = '사용자를 선택하세요...';
+        
+        displaySystemMessage('대화를 종료했습니다.');
+      });
+    }
     const passwordModal = document.getElementById('passwordModal');
     const passwordInput = document.getElementById('passwordInput');
     const decryptButton = document.getElementById('decryptButton');
     const cancelButton = document.getElementById('cancelButton');
+    const chatRequestModal = document.getElementById('chatRequestModal');
+    const chatRequestMessage = document.getElementById('chatRequestMessage');
+    const acceptChatButton = document.getElementById('acceptChatButton');
+    const rejectChatButton = document.getElementById('rejectChatButton');
     
     const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws';
     let ws = null;
     let currentUsername = '';
     let isConnected = false;
+    let currentUserId = null; // 현재 사용자 ID
+    let selectedUserId = null;
+    let currentChatId = null;
+    let isInChat = false;
+    let currentChatRequest = null; // 현재 대화 요청 정보
+    let isRestoringHistory = false; // 메시지 복원 중인지 추적
 
     // Kyber 키 관리
     let myKyber = { publicKey: null, secretKey: null };
@@ -315,6 +912,13 @@
     let isScreenEncrypted = false;
     let originalMessages = new Map();
     let autoEncryptTimer = null;
+
+    // 사용자 목록 관리
+    const userListModal = document.getElementById('userListModal');
+    const userListButton = document.getElementById('userListButton');
+    const closeUserList = document.getElementById('closeUserList');
+    const userList = document.getElementById('userList');
+    let connectedUsers = new Map(); // 사용자 ID -> 사용자 정보
 
     // 로컬 저장소 관리
     const CHAT_STORAGE_KEY = 'kyberchat_encrypted_messages';
@@ -352,9 +956,13 @@
       }
     }
 
-    function saveChatMessage(message, username, isSender, timestamp) {
+    function saveChatMessage(message, username, isSender, timestamp, chatId = null) {
       try {
-        console.log('saveChatMessage 호출됨:', username, message.substring(0, 20) + '...');
+        console.log('saveChatMessage 호출됨:', username, message.substring(0, 20) + '...', '방ID:', chatId);
+        console.log('saveChatMessage - currentChatId:', currentChatId, '전달받은 chatId:', chatId);
+        
+        const roomKey = chatId ? `kyberchat_messages_${chatId}` : 'kyberchat_messages_general';
+        console.log('saveChatMessage - 사용할 roomKey:', roomKey);
         
         const chatData = {
           message: message,
@@ -363,8 +971,8 @@
           timestamp: timestamp || Date.now()
         };
         
-        const existingData = localStorage.getItem(CHAT_STORAGE_KEY);
-        console.log('기존 저장된 데이터:', existingData ? '있음' : '없음');
+        const existingData = localStorage.getItem(roomKey);
+        console.log('기존 저장된 데이터 (방:', chatId || 'general', '):', existingData ? '있음' : '없음');
         
         let messages = [];
         if (existingData) {
@@ -372,13 +980,13 @@
             const decryptedData = simpleDecrypt(existingData, getUserPassword());
             if (decryptedData) {
               messages = JSON.parse(decryptedData);
-              console.log('기존 메시지 복원:', messages.length + '개');
+              console.log('기존 메시지 복원 (방:', chatId || 'general', '):', messages.length + '개');
             } else {
               // 기본 비밀번호로 재시도
               const fallbackDecrypted = simpleDecrypt(existingData, STORAGE_PASSWORD);
               if (fallbackDecrypted) {
                 messages = JSON.parse(fallbackDecrypted);
-                console.log('기본 비밀번호로 기존 메시지 복원:', messages.length + '개');
+                console.log('기본 비밀번호로 기존 메시지 복원 (방:', chatId || 'general', '):', messages.length + '개');
               }
             }
           } catch (e) {
@@ -387,32 +995,37 @@
         }
         
         messages.push(chatData);
-        console.log('새 메시지 추가 후 총 개수:', messages.length + '개');
+        console.log('새 메시지 추가 후 총 개수 (방:', chatId || 'general', '):', messages.length + '개');
         
         // 최대 1000개 메시지만 저장 (메모리 절약)
         if (messages.length > 1000) {
           messages = messages.slice(-1000);
-          console.log('메시지 개수 제한 적용:', messages.length + '개');
+          console.log('메시지 개수 제한 적용 (방:', chatId || 'general', '):', messages.length + '개');
         }
         
         const encryptedMessages = simpleEncrypt(JSON.stringify(messages), getUserPassword());
-        localStorage.setItem(CHAT_STORAGE_KEY, encryptedMessages);
+        localStorage.setItem(roomKey, encryptedMessages);
         
-        console.log('메시지 저장 완료:', username, message.substring(0, 20) + '...');
-        console.log('localStorage 확인:', localStorage.getItem(CHAT_STORAGE_KEY) ? '저장됨' : '저장 실패');
+        console.log('메시지 저장 완료 (방:', chatId || 'general', '):', username, message.substring(0, 20) + '...');
+        console.log('localStorage 확인 (방:', chatId || 'general', '):', localStorage.getItem(roomKey) ? '저장됨' : '저장 실패');
       } catch (error) {
         console.error('메시지 저장 실패:', error);
       }
     }
 
-    function loadChatMessages() {
+    function loadChatMessages(chatId = null) {
       try {
-        console.log('loadChatMessages 호출됨');
-        const encryptedData = localStorage.getItem(CHAT_STORAGE_KEY);
-        console.log('localStorage에서 가져온 데이터:', encryptedData ? '있음' : '없음');
+        console.log('loadChatMessages 호출됨, 방ID:', chatId);
+        console.log('loadChatMessages - currentChatId:', currentChatId, '전달받은 chatId:', chatId);
+        
+        const roomKey = chatId ? `kyberchat_messages_${chatId}` : 'kyberchat_messages_general';
+        console.log('loadChatMessages - 사용할 roomKey:', roomKey);
+        
+        const encryptedData = localStorage.getItem(roomKey);
+        console.log('localStorage에서 가져온 데이터 (방:', chatId || 'general', '):', encryptedData ? '있음' : '없음');
         
         if (!encryptedData) {
-          console.log('저장된 데이터가 없습니다');
+          console.log('저장된 데이터가 없습니다 (방:', chatId || 'general', ')');
           return [];
         }
         
@@ -420,14 +1033,14 @@
         console.log('사용 중인 비밀번호:', currentPassword);
         
         const decryptedData = simpleDecrypt(encryptedData, currentPassword);
-        console.log('복호화 결과:', decryptedData ? '성공' : '실패');
+        console.log('복호화 결과 (방:', chatId || 'general', '):', decryptedData ? '성공' : '실패');
         
         if (!decryptedData) {
-          console.log('복호화 실패, 기본 비밀번호로 재시도');
+          console.log('복호화 실패, 기본 비밀번호로 재시도 (방:', chatId || 'general', ')');
           const fallbackDecrypted = simpleDecrypt(encryptedData, STORAGE_PASSWORD);
           if (fallbackDecrypted) {
             const messages = JSON.parse(fallbackDecrypted);
-            console.log('기본 비밀번호로 복원 성공:', messages.length + '개');
+            console.log('기본 비밀번호로 복원 성공 (방:', chatId || 'general', '):', messages.length + '개');
             return messages;
           }
           return [];
@@ -442,11 +1055,14 @@
       }
     }
 
-    function clearChatMessages() {
+    function clearChatMessages(chatId = null) {
       try {
-        localStorage.removeItem(CHAT_STORAGE_KEY);
-        localStorage.removeItem(KYBER_STORAGE_KEY);
-        console.log('저장된 메시지 삭제 완료');
+        const roomKey = chatId ? `kyberchat_messages_${chatId}` : 'kyberchat_messages_general';
+        const kyberRoomKey = chatId ? `kyberchat_kyber_${chatId}` : 'kyberchat_kyber_general';
+        
+        localStorage.removeItem(roomKey);
+        localStorage.removeItem(kyberRoomKey);
+        console.log('저장된 메시지 삭제 완료 (방:', chatId || 'general', ')');
       } catch (error) {
         console.error('메시지 삭제 실패:', error);
       }
@@ -503,8 +1119,10 @@
       }
     }
 
-    async function saveChatMessageWithKyber(message, username, isSender, timestamp) {
+    async function saveChatMessageWithKyber(message, username, isSender, timestamp, chatId = null) {
       try {
+        const roomKey = chatId ? `kyberchat_kyber_${chatId}` : 'kyberchat_kyber_general';
+        
         const chatData = {
           message: message,
           username: username,
@@ -514,14 +1132,19 @@
         
         // Kyber 키로 암호화 (실패시 사용자 비밀번호 사용)
         const encryptedData = await encryptMessageWithKyber(JSON.stringify(chatData), peerPublicKey);
-        const existingData = localStorage.getItem(KYBER_STORAGE_KEY);
+        const existingData = localStorage.getItem(roomKey);
         let messages = [];
         
         // 기존 데이터 복호화
         if (existingData) {
-          const decryptedData = await decryptMessageWithKyber(existingData, myKyber.secretKey);
-          if (decryptedData) {
-            messages = JSON.parse(decryptedData);
+          try {
+            const decryptedData = await decryptMessageWithKyber(existingData, myKyber.secretKey);
+            if (decryptedData) {
+              messages = JSON.parse(decryptedData);
+            }
+          } catch (error) {
+            console.log('기존 Kyber 데이터 복호화 실패, 새로 시작:', error);
+            messages = [];
           }
         }
         
@@ -534,24 +1157,25 @@
         
         // 전체 메시지 배열을 다시 암호화
         const encryptedMessages = await encryptMessageWithKyber(JSON.stringify(messages), peerPublicKey);
-        localStorage.setItem(KYBER_STORAGE_KEY, encryptedMessages);
+        localStorage.setItem(roomKey, encryptedMessages);
         
-        console.log('메시지 저장 완료 (Kyber):', username, message.substring(0, 20) + '...');
+        console.log('메시지 저장 완료 (Kyber, 방:', chatId || 'general', '):', username, message.substring(0, 20) + '...');
       } catch (error) {
         console.error('메시지 저장 실패:', error);
       }
     }
 
-    async function loadChatMessagesWithKyber() {
+    async function loadChatMessagesWithKyber(chatId = null) {
       try {
-        const encryptedData = localStorage.getItem(KYBER_STORAGE_KEY);
+        const roomKey = chatId ? `kyberchat_kyber_${chatId}` : 'kyberchat_kyber_general';
+        const encryptedData = localStorage.getItem(roomKey);
         if (!encryptedData) return [];
         
         const decryptedData = await decryptMessageWithKyber(encryptedData, myKyber.secretKey);
         if (!decryptedData) return [];
         
         const messages = JSON.parse(decryptedData);
-        console.log('저장된 메시지 로드 (Kyber):', messages.length + '개');
+        console.log('저장된 메시지 로드 (Kyber, 방:', chatId || 'general', '):', messages.length + '개');
         return messages;
       } catch (error) {
         console.error('메시지 로드 실패:', error);
@@ -569,26 +1193,33 @@
     }
 
     async function connectToChat(username) {
+      console.log('connectToChat 시작:', username);
+      
       currentUsername = username;
       currentUsernameSpan.textContent = currentUsername;
+      currentUsernameChatSpan.textContent = currentUsername;
       saveUsername(username);
+      
+      // 모달 숨기기
       usernameModal.style.display = 'none';
-      chatContainer.style.display = 'flex';
+      
+      // 사용자 목록 화면 표시
+      userListScreen.style.display = 'flex';
+      console.log('사용자 목록 화면 표시됨');
       
       // 먼저 Kyber 모듈 로드
-      displaySystemMessage('Kyber 모듈 로딩 중...');
       try {
+        console.log('Kyber 모듈 로딩 시작...');
         await Kyber.ready();
-        displaySystemMessage('Kyber 모듈 로드 완료');
+        console.log('Kyber 모듈 로드 완료');
       } catch (error) {
         console.error('Kyber 모듈 로드 실패:', error);
-        displaySystemMessage('Kyber 모듈 로드 실패. 새로고침 해주세요.');
+        alert('Kyber 모듈 로드 실패. 새로고침 해주세요.');
         return;
       }
       
       // WebSocket 연결
-      displaySystemMessage('서버 연결 중...');
-               // Render.com 배포용 WebSocket 연결
+      console.log('WebSocket 연결 시작...');
                ws = new WebSocket(`${wsProtocol}://${location.host}`);
       setupWebSocketHandlers();
     }
@@ -612,6 +1243,15 @@
           const msg = JSON.parse(event.data);
           console.log('메시지 수신:', msg.type);
           
+          // 사용자 ID 수신
+          if (msg.type === 'user_id') {
+            currentUserId = msg.userId;
+            // userId를 localStorage에 저장하여 다음 접속 시에도 유지
+            localStorage.setItem('kyberchat_user_id', currentUserId);
+            console.log('내 사용자 ID 설정 및 저장됨:', currentUserId);
+            return;
+          }
+          
           // 공개키 수신
           if (msg.type === 'pubkey' && msg.key) {
             console.log('상대방 공개키 수신, 길이:', msg.key.length);
@@ -623,18 +1263,119 @@
               isKeyExchangeComplete = true;
               displaySystemMessage('키 교환 완료!');
               messageInput.disabled = false;
-              messageInput.placeholder = '메시지를 입력하세요...';
+              messageInput.placeholder = '사용자를 선택하세요...';
               console.log('키 교환 완료! 메시지 입력 가능');
               
-              // 키 교환 완료 후 저장된 메시지 복원
-              setTimeout(() => {
-                console.log('키 교환 완료 후 메시지 복원 시도');
-                restoreChatHistory();
-              }, 1000);
+            // 키 교환 완료 - 메시지 복원은 대화방 시작 시에만 실행
+            console.log('키 교환 완료 - 메시지 복원은 대화방 시작 시에만 실행');
             } else {
               displaySystemMessage('상대방 공개키 수신. 내 키 생성 중...');
               console.log('내 키가 아직 준비되지 않음. 대기 중...');
             }
+            return;
+          }
+          
+          // 사용자 목록 업데이트
+          if (msg.type === 'user_list_update') {
+            console.log('사용자 목록 업데이트:', msg.users);
+            connectedUsers.clear();
+            msg.users.forEach(user => {
+              connectedUsers.set(user.userId, user);
+            });
+            updateUserList();
+            return;
+          }
+          
+          // 대화 요청 받음
+          if (msg.type === 'chat_request') {
+            console.log('대화 요청 받음:', msg);
+            currentChatRequest = {
+              fromUserId: msg.fromUserId,
+              fromUsername: msg.fromUsername,
+              requestId: msg.requestId
+            };
+            
+            chatRequestMessage.textContent = `${msg.fromUsername}님이 대화를 요청했습니다.`;
+            chatRequestModal.style.display = 'flex';
+            return;
+          }
+          
+          // 대화 요청 전송 완료
+          if (msg.type === 'chat_request_sent') {
+            displaySystemMessage(msg.message);
+            return;
+          }
+          
+          // 대화 요청 거절됨
+          if (msg.type === 'chat_rejected') {
+            displaySystemMessage(msg.message);
+            return;
+          }
+          
+          // 대화 시작됨
+          if (msg.type === 'chat_started') {
+            console.log('대화 시작됨:', msg);
+            console.log('서버에서 받은 chatId:', msg.chatId);
+            selectedUserId = msg.targetUser.userId;
+            currentChatId = msg.chatId;
+            console.log('설정된 currentChatId:', currentChatId);
+            isInChat = true;
+            
+            // 사용자 목록 화면에서 채팅 화면으로 전환
+            userListScreen.style.display = 'none';
+            chatContainer.style.display = 'flex';
+            
+            // UI 상태 확인 (전환 후)
+            console.log('대화방 UI 상태 확인 (전환 후):');
+            console.log('- chatContainer 표시:', chatContainer.style.display);
+            console.log('- messageInput 존재:', !!messageInput);
+            console.log('- sendButton 존재:', !!sendButton);
+            console.log('- sendButton 표시:', sendButton ? sendButton.style.display : 'N/A');
+            console.log('- sendButton 비활성화:', sendButton ? sendButton.disabled : 'N/A');
+            
+            // 채팅 헤더에 선택된 사용자 표시
+            document.querySelector('.chat-header h3').textContent = `KyberChat - ${msg.targetUser.username}`;
+            
+            // 메시지 입력창 활성화
+            messageInput.disabled = false;
+            messageInput.placeholder = `${msg.targetUser.username}에게 메시지를 입력하세요...`;
+            
+            displaySystemMessage(`${msg.targetUser.username}과의 1:1 채팅을 시작합니다.`);
+            
+            // ✅ 해당 방의 메시지 즉시 복원 (restoreChatHistory에서 초기화 수행)
+            console.log('대화방 시작 후 메시지 복원 시도, currentChatId:', currentChatId);
+            restoreChatHistory();
+            
+            return;
+          }
+          
+          // 대화 종료됨
+          if (msg.type === 'chat_ended') {
+            console.log('대화 종료됨');
+            selectedUserId = null;
+            currentChatId = null;
+            isInChat = false;
+            
+            // ✅ 메시지 컨테이너 초기화
+            const messagesContainer = document.getElementById('messages');
+            messagesContainer.innerHTML = '';
+            console.log('대화 종료 - 메시지 컨테이너 초기화 완료');
+            
+            // 채팅 화면에서 사용자 목록 화면으로 전환
+            chatContainer.style.display = 'none';
+            userListScreen.style.display = 'flex';
+            
+            // 메시지 입력창 비활성화
+            messageInput.disabled = true;
+            messageInput.placeholder = '사용자를 선택하세요...';
+            
+            displaySystemMessage('대화가 종료되었습니다.');
+            return;
+          }
+          
+          // 대화 오류
+          if (msg.type === 'chat_error') {
+            displaySystemMessage(msg.message);
             return;
           }
           
@@ -693,13 +1434,18 @@
       myKyber.secretKey = secretKey;
       console.log('내 키 생성 완료. publicKey 길이:', publicKey.length, 'secretKey 길이:', secretKey.length);
       
+      // 저장된 userId 가져오기 (있으면 재사용)
+      const savedUserId = localStorage.getItem('kyberchat_user_id');
+      
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ 
           type: 'pubkey', 
           alg: 'KYBER512', 
-          key: bytesToBase64(publicKey) 
+          key: bytesToBase64(publicKey),
+          username: currentUsername,
+          savedUserId: savedUserId // 저장된 userId 전송
         }));
-        console.log('내 공개키 전송 완료');
+        console.log('내 공개키 전송 완료, savedUserId:', savedUserId);
         displaySystemMessage('공개키 전송 완료. 상대방 대기 중...');
       }
       
@@ -708,35 +1454,58 @@
         isKeyExchangeComplete = true;
         displaySystemMessage('키 교환 완료!');
         messageInput.disabled = false;
-        messageInput.placeholder = '메시지를 입력하세요...';
+        messageInput.placeholder = '사용자를 선택하세요...';
         console.log('키 교환 완료! (상대방 키 이미 수신됨)');
         
-        // 키 교환 완료 후 저장된 메시지 복원
-        setTimeout(() => {
-          console.log('키 교환 완료 후 메시지 복원 시도 (상대방 키 이미 수신됨)');
-          restoreChatHistory();
-        }, 1000);
+        // 키 교환 완료 - 메시지 복원은 대화방 시작 시에만 실행
+        console.log('키 교환 완료 - 메시지 복원은 대화방 시작 시에만 실행');
       }
     }
 
     // ===== 메시지 전송 =====
+    console.log('sendButton 요소:', sendButton);
+    console.log('sendButton이 존재하는가:', !!sendButton);
+    
     sendButton.addEventListener('click', async () => {
       const message = messageInput.value.trim();
-      if (!message || !isKeyExchangeComplete) return;
+      console.log('[메시지 전송 버튼 클릭] message:', message, 'isKeyExchangeComplete:', isKeyExchangeComplete, 'selectedUserId:', selectedUserId);
+      
+      if (!message || !isKeyExchangeComplete || !selectedUserId) {
+        if (!message) {
+          console.log('[메시지 전송 실패] 메시지가 비어있음');
+        }
+        if (!isKeyExchangeComplete) {
+          console.log('[메시지 전송 실패] 키 교환이 완료되지 않음');
+        }
+        if (!selectedUserId) {
+          console.log('[메시지 전송 실패] 선택된 사용자가 없음');
+          displaySystemMessage('먼저 대화할 사용자를 선택해주세요.');
+        }
+        return;
+      }
       
       try {
-        // 암호화
-        const encryptedData = await Kyber.encrypt(peerPublicKey, message);
+        const targetUser = connectedUsers.get(selectedUserId);
+        if (!targetUser) {
+          displaySystemMessage('선택된 사용자를 찾을 수 없습니다.');
+          return;
+        }
+        
+        // 선택된 사용자의 공개키로 암호화
+        const targetPublicKey = base64ToBytes(targetUser.publicKey);
+        const encryptedData = await Kyber.encrypt(targetPublicKey, message);
         const encryptedBase64 = bytesToBase64(encryptedData);
         
-        // 전송
+        // 선택된 사용자에게만 전송
         ws.send(JSON.stringify({ 
           type: 'encrypted_message', 
           username: currentUsername,
-          encryptedContent: encryptedBase64
+          encryptedContent: encryptedBase64,
+          targetUserId: selectedUserId
         }));
         
         // 표시
+        console.log('[메시지 전송] currentChatId:', currentChatId, 'selectedUserId:', selectedUserId);
         displayMessage(message, true, currentUsername, true);
         messageInput.value = '';
       } catch (error) {
@@ -826,10 +1595,14 @@
       
       // 메시지를 로컬 저장소에 Kyber 키로 암호화해서 저장
       if (saveToStorage && message && !message.startsWith('🔐')) {
+        console.log('[displayMessage] 메시지 저장 시 currentChatId:', currentChatId);
+        console.log('[displayMessage] 메시지 저장 시 selectedUserId:', selectedUserId);
+        console.log('[displayMessage] 메시지 저장 시 isInChat:', isInChat);
+        console.log('[displayMessage] 저장할 메시지:', message.substring(0, 20) + '...');
         // 즉시 저장 (Kyber 키가 없어도 사용자 비밀번호로 저장)
-        saveChatMessageWithKyber(message, username, isSender);
+        saveChatMessageWithKyber(message, username, isSender, null, currentChatId);
         // 추가로 기본 방식으로도 저장 (이중 백업)
-        saveChatMessage(message, username, isSender);
+        saveChatMessage(message, username, isSender, null, currentChatId);
       }
       
       // 화면이 암호화되어 있으면 암호화 상태를 해제하고 타이머 재시작
@@ -846,8 +1619,8 @@
       
       // 10초 후 전체 암호화 (복원된 메시지가 아닌 경우에만)
       if (saveToStorage) {
-        console.log('[displayMessage] 10초 타이머 시작');
-        startAutoEncryptTimer();
+      console.log('[displayMessage] 10초 타이머 시작');
+      startAutoEncryptTimer();
       }
     }
 
@@ -1026,11 +1799,16 @@
 
     // ===== 사용자 이름 입력 =====
     joinButton.addEventListener('click', () => {
+      console.log('입장하기 버튼 클릭됨');
       const username = usernameInput.value.trim();
+      console.log('입력된 사용자 이름:', username);
+      
       if (username.length < 2) {
         alert('사용자 이름은 2자 이상이어야 합니다.');
         return;
       }
+      
+      console.log('connectToChat 함수 호출');
       connectToChat(username);
     });
 
@@ -1050,11 +1828,12 @@
     // 기록 삭제 버튼
     const clearHistoryButton = document.getElementById('clearHistoryButton');
     clearHistoryButton.addEventListener('click', () => {
-      if (confirm('모든 채팅 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
-        clearChatMessages();
+      const roomName = currentChatId ? `방 ${currentChatId}` : '일반 채팅';
+      if (confirm(`${roomName}의 모든 채팅 기록을 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) {
+        clearChatMessages(currentChatId);
         messagesDiv.innerHTML = '';
         originalMessages.clear();
-        displaySystemMessage('채팅 기록이 삭제되었습니다.');
+        displaySystemMessage(`${roomName}의 채팅 기록이 삭제되었습니다.`);
       }
     });
 
@@ -1110,19 +1889,45 @@
     // ===== 저장된 메시지 복원 =====
     async function restoreChatHistory() {
       try {
-        console.log('=== 메시지 복원 시작 ===');
+        // 현재 채팅방이 없으면 복원하지 않음
+        if (!currentChatId) {
+          console.log('현재 채팅방이 없습니다. 복원하지 않음. currentChatId:', currentChatId);
+          return;
+        }
+        
+        // 이미 복원 중이면 중복 실행 방지
+        if (isRestoringHistory) {
+          console.log('메시지 복원이 이미 진행 중입니다. 중복 실행 방지.');
+          return;
+        }
+        
+        console.log('=== 메시지 복원 시작 (방:', currentChatId, ') ===');
+        
+        // ✅ 가장 먼저 메시지 컨테이너 완전 초기화
+        messagesDiv.innerHTML = '';
+        originalMessages.clear();
+        console.log('✅ 메시지 컨테이너 완전 초기화 완료');
+        
+        isRestoringHistory = true;
+        
         console.log('현재 localStorage 상태:', localStorage.length + '개 항목');
-        console.log('CHAT_STORAGE_KEY 값:', localStorage.getItem(CHAT_STORAGE_KEY) ? '있음' : '없음');
-        console.log('KYBER_STORAGE_KEY 값:', localStorage.getItem(KYBER_STORAGE_KEY) ? '있음' : '없음');
+        console.log('currentChatId 값:', currentChatId);
+        
+        // localStorage의 모든 키 확인
+        console.log('localStorage 키들:');
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.includes('kyberchat')) {
+            console.log('  -', key, ':', localStorage.getItem(key) ? '데이터 있음' : '데이터 없음');
+          }
+        }
         
         // 먼저 기본 암호화 방식으로 시도
-        const savedMessages = loadChatMessages();
+        const savedMessages = loadChatMessages(currentChatId);
+        console.log('loadChatMessages 결과:', savedMessages.length + '개 메시지');
+        
         if (savedMessages.length > 0) {
           console.log('저장된 채팅 기록 복원 중...', savedMessages.length + '개');
-          
-          // 기존 메시지 컨테이너 초기화
-          messagesDiv.innerHTML = '';
-          originalMessages.clear();
           
           // 저장된 메시지들을 암호화된 상태로 표시
           savedMessages.forEach((msg, index) => {
@@ -1133,6 +1938,7 @@
           // 복원 완료 메시지
           displaySystemMessage(`${savedMessages.length}개의 저장된 메시지를 복원했습니다. (암호화됨)`);
           console.log('=== 메시지 복원 완료 ===');
+          isRestoringHistory = false; // 복원 완료 플래그 해제
           return;
         }
         
@@ -1153,7 +1959,7 @@
         
         if (myKyber.secretKey && peerPublicKey) {
           console.log('Kyber 키 준비됨, Kyber 암호화 방식으로 복원 시도');
-          const kyberMessages = await loadChatMessagesWithKyber();
+          const kyberMessages = await loadChatMessagesWithKyber(currentChatId);
           if (kyberMessages.length > 0) {
             console.log('저장된 채팅 기록 복원 중 (Kyber)...', kyberMessages.length + '개');
             
@@ -1176,125 +1982,14 @@
         } else {
           console.log('Kyber 키가 준비되지 않음, 복원 실패');
         }
+        
+        isRestoringHistory = false; // 복원 완료 플래그 해제
       } catch (error) {
         console.error('메시지 복원 실패:', error);
+        isRestoringHistory = false; // 오류 발생 시에도 플래그 해제
       }
     }
 
-    // ===== 캡처 방지 기능 =====
-    function preventScreenshot() {
-      // 개발자 도구 방지
-      let devtools = {open: false, orientation: null};
-      const threshold = 160;
-      
-      // 더 강력한 캡처 방지
-      setInterval(() => {
-        if (window.outerHeight - window.innerHeight > threshold || 
-            window.outerWidth - window.innerWidth > threshold) {
-          if (!devtools.open) {
-            devtools.open = true;
-            console.clear();
-            console.log('%c캡처가 감지되었습니다!', 'color: red; font-size: 50px; font-weight: bold;');
-            // 즉시 모든 메시지 암호화
-            encryptAllMessages();
-            // 페이지 내용을 완전히 숨김
-            document.body.innerHTML = '<div style="background: black; color: white; padding: 50px; text-align: center; font-size: 24px;">🔒 캡처가 감지되어 화면이 차단되었습니다.<br>페이지를 새로고침하세요.</div>';
-          }
-        } else {
-          devtools.open = false;
-        }
-      }, 100);
-      
-      // 키보드 단축키 방지
-      document.addEventListener('keydown', (e) => {
-        // F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U 등 방지
-        if (e.key === 'F12' || 
-            (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
-            (e.ctrlKey && e.key === 'U') ||
-            (e.ctrlKey && e.key === 'S') ||
-            (e.ctrlKey && e.key === 'P')) {
-          e.preventDefault();
-          e.stopPropagation();
-          return false;
-        }
-      });
-      
-      // 마우스 우클릭 방지
-      document.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-        return false;
-      });
-      
-      // 드래그 방지
-      document.addEventListener('dragstart', (e) => {
-        e.preventDefault();
-        return false;
-      });
-      
-      // 선택 방지
-      document.addEventListener('selectstart', (e) => {
-        e.preventDefault();
-        return false;
-      });
-      
-      // 화면 캡처 감지 (일부 브라우저에서 지원)
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          console.log('화면이 숨겨졌습니다 - 캡처 가능성');
-          // 화면이 숨겨지면 내용을 암호화
-          if (!isScreenEncrypted) {
-            encryptAllMessages();
-          }
-        }
-      });
-      
-      // 페이지 포커스 감지
-      window.addEventListener('blur', () => {
-        console.log('페이지 포커스 해제 - 캡처 가능성');
-        // 포커스를 잃으면 내용을 암호화
-        if (!isScreenEncrypted) {
-          encryptAllMessages();
-        }
-      });
-      
-      window.addEventListener('focus', () => {
-        console.log('페이지 포커스 복원');
-      });
-      
-      // 모바일에서 뒤로가기 버튼 감지
-      window.addEventListener('popstate', () => {
-        console.log('뒤로가기 감지 - 캡처 가능성');
-        if (!isScreenEncrypted) {
-          encryptAllMessages();
-        }
-      });
-      
-      // 페이지 언로드 시 내용 암호화
-      window.addEventListener('beforeunload', () => {
-        if (!isScreenEncrypted) {
-          encryptAllMessages();
-        }
-      });
-      
-      // 모바일 터치 이벤트 감지 (스크린샷 제스처)
-      let touchStartY = 0;
-      document.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-      });
-      
-      document.addEventListener('touchend', (e) => {
-        const touchEndY = e.changedTouches[0].clientY;
-        const deltaY = touchStartY - touchEndY;
-        
-        // 위로 스와이프 (스크린샷 제스처 가능성)
-        if (deltaY > 100) {
-          console.log('위로 스와이프 감지 - 스크린샷 가능성');
-          if (!isScreenEncrypted) {
-            encryptAllMessages();
-          }
-        }
-      });
-    }
 
     // ===== localStorage 디버깅 =====
     function debugLocalStorage() {
@@ -1311,29 +2006,319 @@
       console.log('=== 디버깅 완료 ===');
     }
 
-    // ===== 초기화 =====
-    window.addEventListener('load', () => {
-      console.log('=== 페이지 로드 시작 ===');
+    // ===== 초기화 ===== (첫 번째 load 이벤트 - 제거됨, 아래 두 번째 것만 사용)
+
+    // ===== 사용자 목록 관리 =====
+    function updateUserList() {
+      try {
+        console.log('[updateUserList] 실행됨, 연결된 사용자 수:', connectedUsers.size);
       
-      // localStorage 디버깅
-      debugLocalStorage();
-      
-      const savedUsername = loadUsername();
-      if (savedUsername) {
-        usernameInput.value = savedUsername;
-        connectToChat(savedUsername);
-      } else {
-        usernameModal.style.display = 'flex';
+      // 모달 사용자 목록 업데이트
+      if (!userList) {
+        console.error('userList 요소를 찾을 수 없습니다!');
+        return;
       }
       
-      // 페이지 로드 시 저장된 메시지 복원 (지연 실행)
-      setTimeout(() => {
-        console.log('페이지 로드 후 메시지 복원 시도');
-        restoreChatHistory();
-      }, 2000);
+      if (connectedUsers.size === 0) {
+        userList.innerHTML = '<div class="no-users">접속한 사용자가 없습니다.</div>';
+      } else {
+        userList.innerHTML = '';
+        connectedUsers.forEach((user, userId) => {
+          if (userId === currentUserId || user.username === currentUsername) return; // 자신은 목록에서 제외
+          
+          const userItem = document.createElement('div');
+          userItem.className = 'user-item';
+          userItem.dataset.userId = userId;
+          
+          const userInfo = document.createElement('div');
+          userInfo.className = 'user-info';
+          
+          const avatar = document.createElement('div');
+          avatar.className = 'user-avatar';
+          avatar.textContent = user.username.charAt(0).toUpperCase();
+          
+          const name = document.createElement('div');
+          name.className = 'user-name';
+          name.textContent = user.username;
+          
+          const status = document.createElement('div');
+          status.className = 'user-status';
+          if (user.inChat) {
+            status.textContent = '대화 중';
+            status.style.color = '#ff6b6b';
+          } else {
+            status.textContent = '온라인';
+            status.style.color = '#28a745';
+          }
+          
+          userInfo.appendChild(avatar);
+          userInfo.appendChild(name);
+          userInfo.appendChild(status);
+          
+          const selectButton = document.createElement('button');
+          selectButton.className = 'select-button';
+          selectButton.textContent = selectedUserId === userId ? '선택됨' : '선택';
+          
+          userItem.appendChild(userInfo);
+          userItem.appendChild(selectButton);
+          
+          userItem.addEventListener('click', () => {
+            selectUser(userId);
+          });
+          
+          userList.appendChild(userItem);
+        });
+      }
       
-      // 캡처 방지 기능 활성화
-      preventScreenshot();
+      // 메인 사용자 목록 업데이트
+      console.log('[updateUserList] updateMainUserList 호출 시작');
+      updateMainUserList();
+      console.log('[updateUserList] updateMainUserList 호출 완료');
+      } catch (error) {
+        console.error('[updateUserList] 함수에서 오류 발생:', error);
+      }
+    }
+
+    function updateMainUserList() {
+      console.log('[updateMainUserList] 실행됨, 연결된 사용자 수:', connectedUsers.size);
+      const mainUserList = document.getElementById('mainUserList');
+      
+      if (!mainUserList) {
+        console.error('mainUserList 요소를 찾을 수 없습니다!');
+        return;
+      }
+      
+      console.log('mainUserList 요소 찾음:', mainUserList);
+      
+      if (connectedUsers.size === 0) {
+        console.log('사용자가 없어서 "접속한 사용자가 없습니다" 표시');
+        mainUserList.innerHTML = '<div class="no-users">접속한 사용자가 없습니다.</div>';
+        return;
+      }
+      
+      mainUserList.innerHTML = '';
+      console.log('사용자 목록 생성 시작, 총 사용자 수:', connectedUsers.size);
+      let addedUsers = 0;
+      
+      connectedUsers.forEach((user, userId) => {
+        console.log(`사용자 확인: ${user.username} (${userId}), 현재 사용자: ${currentUsername} (${currentUserId})`);
+        if (userId === currentUserId || user.username === currentUsername) {
+          console.log('자신은 목록에서 제외:', user.username);
+          return; // 자신은 목록에서 제외
+        }
+        
+        const userItem = document.createElement('div');
+        userItem.className = 'main-user-item';
+        userItem.dataset.userId = userId;
+        
+        if (user.inChat) {
+          userItem.classList.add('disabled');
+        }
+        
+        const userInfo = document.createElement('div');
+        userInfo.className = 'main-user-info';
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'main-user-avatar';
+        avatar.textContent = user.username.charAt(0).toUpperCase();
+        
+        const details = document.createElement('div');
+        details.className = 'main-user-details';
+        
+        const name = document.createElement('div');
+        name.className = 'main-user-name';
+        name.textContent = user.username;
+        
+        const status = document.createElement('div');
+        status.className = 'main-user-status';
+        if (user.inChat) {
+          status.textContent = '대화 중';
+          status.classList.add('busy');
+        } else {
+          status.textContent = '온라인';
+          status.classList.add('online');
+        }
+        
+        details.appendChild(name);
+        details.appendChild(status);
+        
+        userInfo.appendChild(avatar);
+        userInfo.appendChild(details);
+        
+        const chatButton = document.createElement('button');
+        chatButton.className = 'main-chat-button';
+        chatButton.textContent = '채팅하기';
+        chatButton.disabled = user.inChat;
+        
+        userItem.appendChild(userInfo);
+        userItem.appendChild(chatButton);
+        
+        userItem.addEventListener('click', () => {
+          if (!user.inChat) {
+            selectUser(userId);
+          }
+        });
+        
+        console.log(`사용자 아이템 추가: ${user.username} (${userId})`);
+        mainUserList.appendChild(userItem);
+        addedUsers++;
+      });
+      
+      console.log(`사용자 목록 생성 완료, 추가된 사용자 수: ${addedUsers}`);
+    }
+
+    function selectUser(userId) {
+      console.log('[selectUser] 사용자 선택:', userId);
+      
+      const user = connectedUsers.get(userId);
+      if (!user) {
+        displaySystemMessage('사용자를 찾을 수 없습니다.');
+        return;
+      }
+      
+      // 이미 대화 중인 사용자인지 확인
+      if (user.inChat) {
+        displaySystemMessage(`${user.username}은 이미 다른 사용자와 대화 중입니다.`);
+        return;
+      }
+      
+      // 현재 사용자가 이미 대화 중인지 확인
+      if (isInChat) {
+        displaySystemMessage('이미 다른 사용자와 대화 중입니다.');
+        return;
+      }
+      
+      // 대화 요청 전송
+      ws.send(JSON.stringify({
+        type: 'request_chat',
+        targetUserId: userId
+      }));
+      
+      displaySystemMessage(`${user.username}에게 대화 요청을 보냈습니다.`);
+    }
+
+    function addUser(userId, username, publicKey) {
+      console.log('[addUser] 사용자 추가:', userId, username);
+      connectedUsers.set(userId, { username, publicKey, connected: true });
+      updateUserList();
+    }
+
+    function removeUser(userId) {
+      console.log('[removeUser] 사용자 제거:', userId);
+      connectedUsers.delete(userId);
+      updateUserList();
+      
+      if (selectedUserId === userId) {
+        selectedUserId = null;
+        document.querySelector('.chat-header h3').textContent = 'KyberChat';
+        messageInput.placeholder = '사용자를 선택하세요...';
+        messageInput.disabled = true;
+        displaySystemMessage('선택된 사용자가 연결을 끊었습니다.');
+      }
+    }
+
+    // 대화 종료 버튼 추가/제거
+    function addEndChatButton() {
+      const userInfo = document.querySelector('.user-info');
+      const existingButton = document.getElementById('endChatButton');
+      
+      if (!existingButton) {
+        const endChatButton = document.createElement('button');
+        endChatButton.id = 'endChatButton';
+        endChatButton.textContent = '대화 종료';
+        endChatButton.style.background = '#ff6b6b';
+        endChatButton.style.color = 'white';
+        endChatButton.style.marginLeft = '8px';
+        endChatButton.style.border = 'none';
+        endChatButton.style.padding = '6px 12px';
+        endChatButton.style.borderRadius = '4px';
+        endChatButton.style.cursor = 'pointer';
+        endChatButton.style.fontSize = '12px';
+        
+        endChatButton.addEventListener('click', () => {
+          ws.send(JSON.stringify({
+            type: 'end_chat'
+          }));
+        });
+        
+        userInfo.appendChild(endChatButton);
+      }
+    }
+
+    function removeEndChatButton() {
+      const endChatButton = document.getElementById('endChatButton');
+      if (endChatButton) {
+        endChatButton.remove();
+      }
+    }
+
+    // 대화 요청 수락/거절 버튼
+    acceptChatButton.addEventListener('click', () => {
+      if (currentChatRequest) {
+        ws.send(JSON.stringify({
+          type: 'accept_chat',
+          requestId: currentChatRequest.requestId,
+          fromUserId: currentChatRequest.fromUserId
+        }));
+        
+        chatRequestModal.style.display = 'none';
+        currentChatRequest = null;
+      }
+    });
+    
+    rejectChatButton.addEventListener('click', () => {
+      if (currentChatRequest) {
+        ws.send(JSON.stringify({
+          type: 'reject_chat',
+          fromUserId: currentChatRequest.fromUserId
+        }));
+        
+        chatRequestModal.style.display = 'none';
+        currentChatRequest = null;
+        displaySystemMessage('대화 요청을 거절했습니다.');
+      }
+    });
+
+    // 사용자 목록 모달 이벤트 리스너 (기존 기능 유지)
+    if (userListButton) {
+      userListButton.addEventListener('click', () => {
+        if (isInChat) {
+          displaySystemMessage('현재 대화를 종료한 후 다른 사용자를 선택할 수 있습니다.');
+          return;
+        }
+        userListModal.style.display = 'flex';
+        updateUserList();
+      });
+    }
+
+    closeUserList.addEventListener('click', () => {
+      userListModal.style.display = 'none';
+    });
+
+    // 모달 외부 클릭 시 닫기
+    userListModal.addEventListener('click', (e) => {
+      if (e.target === userListModal) {
+        userListModal.style.display = 'none';
+      }
+    });
+
+    // 페이지 로드 시 초기화
+    window.addEventListener('load', () => {
+      console.log('=== 페이지 로드 완료 ===');
+      
+      // localStorage 디버깅 (필요시)
+      // debugLocalStorage();
+      
+      // 저장된 사용자 이름이 있으면 자동으로 연결
+      const savedUsername = loadUsername();
+      
+      if (savedUsername && savedUsername.length >= 2) {
+        console.log('저장된 사용자 이름으로 자동 연결:', savedUsername);
+        connectToChat(savedUsername);
+      } else {
+        console.log('사용자 이름 입력 모달 표시');
+        usernameModal.style.display = 'flex';
+      }
     });
   </script>
 </body>
